@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+#include "vanitas/profile.hpp"
+
 namespace vanitas {
 
 struct Event; // vanitas::Event
@@ -46,10 +48,11 @@ static void print_items(const std::vector<vanitas::Item> &items)
 class Classifier
 {
     public:
-        Classifier();
+        Classifier(const Profile &p);
         std::vector<Item> classify(const std::vector<Block> &blocks);
 
     private:
+        const Profile &p_;
         size_t errors_count;
         size_t warn_count;
 };
