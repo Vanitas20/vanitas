@@ -1,0 +1,3 @@
+Start
+[31mRED[0m normal
+Progress 10%Progress 20%Done

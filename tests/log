@@ -1,0 +1,61 @@
+ERR 2025-07-30T21:34:33.277 ui.27413   tui_stop:615: TUI already stopped (race?)
+ERR 2025-07-30T21:34:35.505 ui.27506   tui_stop:615: TUI already stopped (race?)
+ERR 2025-07-31T09:47:28.358 ui.2821    tui_stop:615: TUI already stopped (race?)
+ERR 2025-07-31T14:31:03.791 nvim.54036.0 os_set_cloexec:500: Failed to get flags on descriptor 3: Помилковий дескриптор файла
+ERR 2025-08-07T10:07:12.472 ui.9789    tui_stop:615: TUI already stopped (race?)
+ERR 2025-08-10T16:10:50.131 ui.55255   tui_stop:615: TUI already stopped (race?)
+ERR 2025-08-12T21:31:58.641 ui.7675    tui_stop:615: TUI already stopped (race?)
+ERR 2025-09-02T15:51:45.879 nvim.64161.0 decor_provider_error:36: Error in decoration provider "line" (ns=nvim.treesitter.highlighter):
+Error executing lua: /usr/share/nvim/runtime/lua/vim/treesitter/highlighter.lua:370: Invalid 'end_col': out of range
+stack traceback:
+	[C]: in function 'nvim_buf_set_extmark'
+	/usr/share/nvim/runtime/lua/vim/treesitter/highlighter.lua:370: in function 'fn'
+	/usr/share/nvim/runtime/lua/vim/treesitter/highlighter.lua:232: in function 'for_each_highlight_state'
+	/usr/share/nvim/runtime/lua/vim/treesitter/highlighter.lua:322: in function 'on_line_impl'
+	/usr/share/nvim/runtime/lua/vim/treesitter/highlighter.lua:411: in function </usr/share/nvim/runtime/lua/vim/treesitter/highlighter.lua:405>
+	[C]: in function 'nvim_command'
+	vim/_editor.lua: in function <vim/_editor.lua:0>
+ERR 2025-09-02T18:29:12.563 nvim.88554.0 decor_provider_error:36: Error in decoration provider "line" (ns=nvim.treesitter.highlighter):
+Error executing lua: /usr/share/nvim/runtime/lua/vim/treesitter/highlighter.lua:370: Invalid 'end_col': out of range
+stack traceback:
+	[C]: in function 'nvim_buf_set_extmark'
+	/usr/share/nvim/runtime/lua/vim/treesitter/highlighter.lua:370: in function 'fn'
+	/usr/share/nvim/runtime/lua/vim/treesitter/highlighter.lua:232: in function 'for_each_highlight_state'
+	/usr/share/nvim/runtime/lua/vim/treesitter/highlighter.lua:322: in function 'on_line_impl'
+	/usr/share/nvim/runtime/lua/vim/treesitter/highlighter.lua:411: in function </usr/share/nvim/runtime/lua/vim/treesitter/highlighter.lua:405>
+ERR 2025-09-08T18:38:22.658 nvim.4329.0 decor_provider_error:36: Error in decoration provider "line" (ns=nvim.treesitter.highlighter):
+Error executing lua: /usr/share/nvim/runtime/lua/vim/treesitter.lua:195: Index out of bounds
+stack traceback:
+	[C]: in function 'nvim_buf_get_text'
+	/usr/share/nvim/runtime/lua/vim/treesitter.lua:195: in function 'get_node_text'
+	/usr/share/nvim/runtime/lua/vim/treesitter/query.lua:553: in function 'handler'
+	/usr/share/nvim/runtime/lua/vim/treesitter/query.lua:884: in function '_match_predicates'
+	/usr/share/nvim/runtime/lua/vim/treesitter/query.lua:1013: in function 'iter'
+	/usr/share/nvim/runtime/lua/vim/treesitter/highlighter.lua:385: in function 'fn'
+	/usr/share/nvim/runtime/lua/vim/treesitter/highlighter.lua:239: in function 'for_each_highlight_state'
+	/usr/share/nvim/runtime/lua/vim/treesitter/highlighter.lua:358: in function 'on_line_impl'
+	/usr/share/nvim/runtime/lua/vim/treesitter/highlighter.lua:457: in function </usr/share/nvim/runtime/lua/vim/treesitter/highlighter.lua:451>
+ERR 2025-09-17T12:44:36.004 ui.32248   tui_stop:641: TUI already stopped (race?)
+ERR 2025-09-17T12:45:37.285 ui.33589   tui_stop:641: TUI already stopped (race?)
+ERR 2025-09-17T12:45:47.745 ui.34015   tui_stop:641: TUI already stopped (race?)
+ERR 2025-09-17T12:50:57.185 ui.34485   tui_stop:641: TUI already stopped (race?)
+ERR 2025-09-18T20:48:14.517 ui.37656   tui_stop:641: TUI already stopped (race?)
+ERR 2025-09-21T09:51:23.716 ui.1207078 terminfo_start:511: uv_tty_init failed: invalid argument
+ERR 2025-09-21T09:51:23.716 ui.1207078 flush_buf:2647: uv_write failed: bad file descriptor
+ERR 2025-09-21T09:51:23.716 ui.1207078 flush_buf:2647: uv_write failed: bad file descriptor
+ERR 2025-09-21T09:51:23.717 ui.1207078 tui_stop:641: TUI already stopped (race?)
+ERR 2025-09-23T09:27:09.896 ui.4827    tui_stop:641: TUI already stopped (race?)
+ERR 2025-09-25T08:46:30.205 ui.8447    tui_stop:641: TUI already stopped (race?)
+ERR 2025-09-25T21:39:41.688 ui.17589   tui_stop:641: TUI already stopped (race?)
+ERR 2025-09-26T18:55:50.496 ui.67584   tui_stop:641: TUI already stopped (race?)
+ERR 2025-09-26T21:50:07.615 ui.80319   tui_stop:641: TUI already stopped (race?)
+ERR 2025-09-26T22:23:27.835 ui.86767   tui_stop:641: TUI already stopped (race?)
+ERR 2025-09-29T10:33:42.633 ui.13902   tui_stop:641: TUI already stopped (race?)
+ERR 2025-09-30T09:02:59.635 ui.3916    terminfo_start:511: uv_tty_init failed: invalid argument
+ERR 2025-09-30T09:02:59.635 ui.3916    flush_buf:2647: uv_write failed: bad file descriptor
+ERR 2025-09-30T09:02:59.635 ui.3916    flush_buf:2647: uv_write failed: bad file descriptor
+ERR 2025-09-30T09:02:59.636 ui.3916    tui_stop:641: TUI already stopped (race?)
+WRN 2025-11-09T19:57:25.109 ui.98105   tui_stop:654: TUI: timed out waiting for DA1 response
+WRN 2025-11-10T21:47:53.320 ui.425062  tui_stop:654: TUI: timed out waiting for DA1 response
+WRN 2025-11-10T21:49:26.213 ui.426086  tui_stop:654: TUI: timed out waiting for DA1 response
+WRN 2025-11-10T21:50:58.748 ui.426206  tui_stop:654: TUI: timed out waiting for DA1 response
