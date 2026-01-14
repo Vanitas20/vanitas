@@ -4,9 +4,5 @@
 #include "commands/include/analyze_stream.hpp"
 
 namespace vanitas::cli {
-int PipeCommand::execute()
-{
-    auto prof = vanitas::default_profile();
-    return vanitas::cli::analyze_stream(std::cin, prof);
-}
+int PipeCommand::execute() { return vanitas::cli::analyze_stream(std::cin, prof_); }
 } // namespace vanitas::cli

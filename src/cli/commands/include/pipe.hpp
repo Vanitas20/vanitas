@@ -2,15 +2,17 @@
 
 #include "command.hpp"
 #include "vanitas/args_parser.hpp"
+#include "vanitas/profile.hpp"
 
 namespace vanitas::cli {
 class PipeCommand final : public ICommand
 {
     public:
-        explicit PipeCommand(const Args &a) : args(a) {}
+        explicit PipeCommand(const Args &a, const vanitas::Profile &prof) : args(a), prof_(prof) {}
         int execute() override;
 
     private:
-        Args args;
+        const vanitas::Args &args;
+        const vanitas::Profile &prof_;
 };
 } // namespace vanitas::cli

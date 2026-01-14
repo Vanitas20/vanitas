@@ -2,15 +2,18 @@
 
 #include "command.hpp"
 #include "vanitas/args_parser.hpp"
+#include "vanitas/profile.hpp"
 
 namespace vanitas::cli {
+
 class RunCommand final : public ICommand
 {
     public:
-        explicit RunCommand(const Args &a) : args(a) {}
+        explicit RunCommand(const vanitas::Args &a, const vanitas::Profile &prof) : args(a), prof_(prof) {}
         int execute() override;
 
     private:
-        Args args;
+        const vanitas::Args &args;
+        const vanitas::Profile &prof_;
 };
 } // namespace vanitas::cli

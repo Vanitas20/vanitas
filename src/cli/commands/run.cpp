@@ -12,7 +12,6 @@
 #include "vanitas/block_builder.hpp"
 #include "vanitas/classifier.hpp"
 #include "vanitas/normalizer.hpp"
-#include "vanitas/profile.hpp"
 
 namespace vanitas::cli {
 
@@ -65,11 +64,9 @@ int RunCommand::execute()
         return 1;
     }
 
-    vanitas::Profile prof = vanitas::default_profile();
-
     vanitas::Normalizer norm;
-    vanitas::BlockBuilder builder(prof);
-    vanitas::Classifier classifier;
+    vanitas::BlockBuilder builder(prof_);
+    vanitas::Classifier classifier(prof_);
 
     std::vector<char> buf(4096);
     while (true) {

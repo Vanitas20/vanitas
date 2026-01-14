@@ -13,7 +13,6 @@ int FileCommand::execute()
         return 1;
     }
 
-    auto prof = vanitas::default_profile();
-    return analyze_stream(file, prof);
+    return analyze_stream(file, prof_);
 }
 } // namespace vanitas::cli
