@@ -11,7 +11,7 @@ int analyze_stream(std::istream &in, const vanitas::Profile &prof)
 {
     vanitas::Normalizer n;
     vanitas::BlockBuilder builder(prof);
-    vanitas::Classifier clas;
+    vanitas::Classifier clas(prof);
 
     std::vector<char> buf(4096);
 
