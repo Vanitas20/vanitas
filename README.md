@@ -114,3 +114,58 @@ Run a command with arguments (note the -- separator):
 ```bash
 ./build/vanitas run -- sh -c 'echo out; echo err 1>&2'
 ```
+
+## Configuration & Profiles 
+
+Vanitas can load configuration from ~/.vanitas/config.toml and profiles from ~/.vanitas/profiles/*.toml 
+
+### Profile selection (precedence)
+
+The effective profile is selected in this order (highest → lowest):
+1. --profile <name> CLI flag
+2. profile = "<name>" in ~/.vanitas/config.toml
+3. default
+​
+
+Use vanitas profile list to see what profiles are available and where they come from.
+
+### Inline profiles in config.toml
+
+You can define inline profiles inside ~/.vanitas/config.toml under [profiles.<name>...].
+Important: nested tables must use dotted headers, otherwise they will not be inside the profile table (TOML table scoping).
+
+#### Example:
+```bash
+# ~/.vanitas/config.toml
+profile = "nvim"
+
+[profiles.nvim.classify]
+err = ["decor_provider_error:"]
+```
+
+### File profiles in ~/.vanitas/profiles/
+
+A file profile ~/.vanitas/profiles/<name>.toml is a standalone profile, and its keys live at the root of the document (no [profiles.<name>] wrapper).
+​
+#### Example:
+```bash
+# ~/.vanitas/profiles/base.toml
+extends = "default"
+
+[classify]
+tests = ["MY_BASE_TEST"]
+```
+
+### Extends (profile inheritance)
+
+Profiles can inherit from another profile using:
+```bash
+extends = "base"
+```
+
+The effective profile is built as: base_profile overlaid by current_profile (current values override base values).
+Note: list fields currently use “replace” semantics (if classify.err is set in the child profile, it replaces the base list).
+
+Debugging config/profile
+- --dump-config prints the effective configuration after precedence.
+- --dump-profile currently validates that the selected profile resolves and compiles successfully (including extends), and exits with non-zero code on errors like cycles.
