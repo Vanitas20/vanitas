@@ -144,4 +144,29 @@ Profile ProfileManager::load(const std::string &name_or_path)
     }
 }
 
+Profile ProfileManager::load_from_value(const Profile &base, const toml::value &v)
+{
+    Profile out = base;
+
+    auto apply = [&](std::vector<std::regex> &dst, const std::optional<std::vector<std::string>> &pats, const char *field_name) {
+        if (!pats)
+            return;
+        dst = compile_regex_list(*pats, field_name);
+    };
+
+    const auto firstline = toml::find<std::optional<std::vector<std::string>>>(v, "firstline", "patterns");
+    const auto continuation = toml::find<std::optional<std::vector<std::string>>>(v, "continuation", "patterns");
+    const auto err = toml::find<std::optional<std::vector<std::string>>>(v, "classify", "err");
+    const auto wrn = toml::find<std::optional<std::vector<std::string>>>(v, "classify", "wrn");
+    const auto tests = toml::find<std::optional<std::vector<std::string>>>(v, "classify", "tests");
+
+    apply(out.firstline, firstline, "firstline.patterns");
+    apply(out.continuation, continuation, "continuation.patterns");
+    apply(out.err, err, "classify.err");
+    apply(out.wrn, wrn, "classify.wrn");
+    apply(out.tests, tests, "classify.tests");
+
+    return out;
+}
+
 } // namespace vanitas

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <filesystem>
+#include <toml.hpp>
 
 #include "vanitas/profile.hpp"
 
@@ -11,8 +12,8 @@ class ProfileManager
     public:
         void ensure_default_profiles();
         Profile load(const std::string &name_or_path);
+        Profile load_from_value(const Profile &base, const toml::value &v);
 
-    private:
         std::filesystem::path base_dir() const;
         std::filesystem::path profiles_dir() const;
 };
