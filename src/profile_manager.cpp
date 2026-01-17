@@ -4,6 +4,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <toml.hpp>
+#include <unordered_set>
 
 #include "vanitas/profile.hpp"
 
@@ -107,6 +108,125 @@ static Profile compile_profile(const RawProfile &raw)
 static bool is_effectively_empty(const Profile &p)
 {
     return p.firstline.empty() && p.continuation.empty() && p.err.empty() && p.wrn.empty() && p.tests.empty();
+}
+
+static std::optional<std::string> try_get_extends(const toml::value &v)
+{
+    try {
+        return toml::find<std::string>(v, "extends");
+    } catch (...) {
+        return std::nullopt;
+    }
+}
+
+static RawProfile parse_raw_profile(const toml::value &v) { return parse_profile_value(v); }
+
+std::optional<toml::value> ProfileManager::try_load_file_value(const std::string &name_or_path)
+{
+    std::filesystem::path p(name_or_path);
+    if (!p.has_parent_path()) {
+        p = profiles_dir() / (name_or_path + ".toml");
+    }
+
+    if (!std::filesystem::exists(p)) {
+        return std::nullopt;
+    }
+
+    const auto r = toml::try_parse(p.string());
+    if (r.is_err()) {
+        return std::nullopt;
+    }
+    return r.unwrap();
+}
+
+std::optional<ProfileManager::ProfileValueSource> ProfileManager::try_load_profile_value(const std::string &name,
+                                                                                         const std::optional<toml::value> &cfgv)
+{
+    if (cfgv) {
+        try {
+            toml::value pv = toml::find(*cfgv, "profiles", name);
+            return ProfileValueSource{pv, "config.toml:[profiles." + name + "]"};
+        } catch (...) {
+        }
+    }
+
+    std::filesystem::path p = profiles_dir() / (name + ".toml");
+    if (auto v = try_load_file_value(name)) {
+        return ProfileValueSource{*v, p.string()};
+    }
+
+    return std::nullopt;
+}
+
+toml::value ProfileManager::merge_profile_values(const toml::value &base, const toml::value &overlay)
+{
+    toml::value out = base;
+
+    auto apply = [&](const std::string &table, const std::string &key) {
+        const auto v = toml::find<std::optional<std::vector<std::string>>>(overlay, table, key);
+        if (!v)
+            return;
+
+        if (!out.contains(table)) {
+            out[table] = toml::table{};
+        }
+        if (!out.at(table).is_table()) {
+            out[table] = toml::table{};
+        }
+        out[table][key] = *v;
+    };
+
+    apply("firstline", "patterns");
+    apply("continuation", "patterns");
+    apply("classify", "err");
+    apply("classify", "wrn");
+    apply("classify", "tests");
+
+    return out;
+}
+
+Profile ProfileManager::load_effective(const std::string &name, const std::optional<toml::value> &cfgv)
+{
+    std::unordered_set<std::string> stack;
+
+    std::function<toml::value(const std::string &)> resolve = [&](const std::string &cur) -> toml::value {
+        if (stack.count(cur)) {
+            throw std::runtime_error("Profile extends cycle detected at: " + cur);
+        }
+        stack.insert(cur);
+
+        toml::value overlay = toml::table{};
+        if (auto src = try_load_profile_value(cur, cfgv)) {
+            overlay = src->value;
+        } else {
+            throw std::runtime_error("Profile not found: " + cur);
+        }
+
+        const std::string base_name = try_get_extends(overlay).value_or("default");
+
+        toml::value base;
+        if (cur == "default" && !try_get_extends(overlay).has_value()) {
+            base = toml::value(toml::table{});
+        } else {
+            base = resolve(base_name);
+        }
+
+        toml::value merged = merge_profile_values(base, overlay);
+
+        stack.erase(cur);
+        return merged;
+    };
+
+    toml::value effv = resolve(name);
+    RawProfile raw = parse_raw_profile(effv);
+    Profile prof = compile_profile(raw);
+
+    if (is_effectively_empty(prof)) {
+        std::cerr << "WARN: Effective profile '" << name << "' has no rules; using built-in default profile.\n";
+        return default_profile();
+    }
+
+    return prof;
 }
 
 Profile ProfileManager::load(const std::string &name_or_path)
