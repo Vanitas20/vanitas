@@ -85,9 +85,13 @@ int CliApp::run(int argc, char *const argv[])
         vanitas::ProfileManager pm;
         pm.ensure_default_profiles();
 
-        const vanitas::Config cfg = vanitas::load_user_config();
-        const auto cfgv = vanitas::load_user_config_value();
+        if (args.mode == vanitas::Mode::ProfileList) {
+            ProfileCommand cmd(args, pm);
+            std::exit(cmd.execute());
+        }
 
+        const vanitas::Config cfg = vanitas::load_user_config();
+        auto cfgv = vanitas::load_user_config_value();
         const std::string profile_name = args.profile.value_or(cfg.profile.value_or("default"));
 
         const char *profile_selected_src = args.profile ? "CLI --profile" : (cfg.profile ? "config.profile" : "default");
@@ -95,75 +99,25 @@ int CliApp::run(int argc, char *const argv[])
         if (args.dump_config) {
             std::cout << "Effective config\n";
             std::cout << "  profile = " << profile_name << " (source: " << profile_selected_src << ")\n";
-
-            std::cout << "  color  = " << (cfg.color ? "true" : "false") << " (source: " << (cfgv ? "config/defaults" : "defaults")
-                      << ")\n";
-            std::cout << "  format = " << cfg.format << " (source: " << (cfgv ? "config/defaults" : "defaults") << ")\n";
+            std::cout << "  color  = " << (cfg.color ? "true" : "false") << "\n";
+            std::cout << "  format = " << cfg.format << "\n";
             std::exit(0);
         }
 
         if (args.dump_profile) {
-            const fs::path def_path = pm.profiles_dir() / "default.toml";
-            ProfileDump base_dump;
-
-            if (auto defv = try_parse_file(def_path)) {
-                base_dump = dump_from_value_fallback_empty(*defv);
-            }
-
-            std::string overlay_src = "none";
-            ProfileDump eff = base_dump;
-
-            // 1) inline профіль з config.toml має пріоритет
-            bool used_inline = false;
-            if (cfgv) {
-                try {
-                    const toml::value pv = toml::find(*cfgv, "profiles", profile_name);
-                    eff = merge_dump(base_dump, pv);
-                    overlay_src = "config.toml:[profiles." + profile_name + "]";
-                    used_inline = true;
-                } catch (...) {
-                }
-            }
-
-            if (!used_inline) {
-                const fs::path p = pm.profiles_dir() / (profile_name + ".toml");
-                if (auto fv = try_parse_file(p)) {
-                    eff = merge_dump(base_dump, *fv);
-                    overlay_src = p.string();
-                } else {
-                    overlay_src = "none (using default only)";
-                }
-            }
-
             std::cout << "Selected profile: " << profile_name << " (source: " << profile_selected_src << ")\n";
-            std::cout << "Overlay source: " << overlay_src << "\n";
-            std::cout << "Base: " << def_path.string() << "\n\n";
 
-            print_list("firstline.patterns", eff.firstline);
-            print_list("continuation.patterns", eff.continuation);
-            print_list("classify.err", eff.err);
-            print_list("classify.wrn", eff.wrn);
-            print_list("classify.tests", eff.tests);
-
-            std::exit(0);
-        }
-
-        if (args.mode == vanitas::Mode::ProfileList) {
-            ProfileCommand cmd(args, pm);
-            std::exit(cmd.execute());
-        }
-
-        vanitas::Profile prof;
-        if (cfgv) {
             try {
-                const toml::value pv = toml::find(*cfgv, "profiles", profile_name);
-                prof = pm.load_from_value(pm.load("default"), pv);
-            } catch (const std::exception &) {
-                prof = pm.load(profile_name);
+                (void)pm.load_effective(profile_name, cfgv);
+                std::cout << "OK: resolved and compiled (extends applied)\n";
+                std::exit(0);
+            } catch (const std::exception &e) {
+                std::cerr << e.what() << "\n";
+                std::exit(2);
             }
-        } else {
-            prof = pm.load(profile_name);
         }
+
+        vanitas::Profile prof = pm.load_effective(profile_name, cfgv);
 
         int rc = 0;
         switch (args.mode) {
