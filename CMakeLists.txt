@@ -18,6 +18,7 @@ add_executable(vanitas
   src/profile.cpp
   src/profile_manager.cpp
   src/args_parser.cpp
+  src/config.cpp
 )
 
 target_link_libraries(vanitas PUBLIC toml11::toml11)
